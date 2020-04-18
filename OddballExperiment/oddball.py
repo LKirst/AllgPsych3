@@ -21,10 +21,11 @@ try:
     from psychopy import parallel
     if parallel.ParallelPort is None:
         import utils_parallel_simulated as parallel
+        logging.warn('A parallel port will be simulated!')
     parallel_imported = True
 except OSError:
     parallel_imported = False
-    logging.warn('Das Modul "parallel" konnte nicht importiert werden! Es werden keine Trigger gesendet.')
+    logging.warn('The package "parallel" could not be found! No trigger will be sent.')
 
 
 class Oddball:
@@ -41,8 +42,13 @@ class Oddball:
                     verticesPixStim, # the vertices of the shape in pixls
                     trackFrIntervals = True, # whether to track the frame intervals
                     dataSaveClock = None, # a clock for which we'll query for the timing of every trial stored alongside the data
-                    stopIndxForInstr = -1
+                    stopIndxForInstr = -1,
+                    seed = None
                     ):
+        
+        np.random.seed(seed = seed) # if seed is not None, the calls to 
+        # np.random will not be (pseudo-)random but produce a reproducible sequence
+    
         
         self.win        = win
         self.thisExp    = expHandler
@@ -112,7 +118,8 @@ class Oddball:
         self.dataSaveClock = core.Clock() if dataSaveClock is None else dataSaveClock # this clock is for storing the time of each trial
         self.mouse = event.Mouse(win = self.win)
     
-    def runOddball(self, triggerdeviant, triggerstandard, stopIndex, waitbeforecontinue = 2):
+    def runOddball(self, triggerdeviant, triggerstandard, stopIndex, 
+                   waitbeforecontinue = 2):
         """
         The most accurate way to time your stimulus presentation is to
         present for a certain number of frames. For that to work you need
@@ -165,6 +172,9 @@ class Oddball:
                 
                 # Stimulus updates
                 if frameN >= off2On_isi and stim.status == NOT_STARTED:
+                    if self.parallel_port_exists:
+                        # callOnFlip(function, *args, **kwargs): Call a function immediately AFTER the next .flip() command.
+                        self.win.callOnFlip(self._sendTrigger, triggerSignal) 
                     stim.frameNStart = frameN # exact frame index
                     stim.tStart = self.dataSaveClock.getTime()
                     stim.autoDraw = True
@@ -184,7 +194,9 @@ class Oddball:
                 self.win.flip() # makes all changes visible
             
             self.trialHandler.addData('tPresentation', stim.tStart)
-            self.thisExp.nextEntry() #indicates to the ExperimentHandler that the current trial has ended and so further addData() calls correspond to the next trial
+            # indicates to the ExperimentHandler that the current trial has 
+            # ended and so further addData() calls correspond to the next trial
+            self.thisExp.nextEntry() 
             
             # if you want to stop the runOddball function at some index to collect responses, you can use stopIndex
             if self.trialHandler.thisN == stopIndex:
@@ -262,14 +274,17 @@ class Oddball:
         self.trialClock.add(self.triggerlen)
     
     def _stimsList(self, ntrials, pdeviants, maxNConsecStan):
-#        
+        #        
         # draw indices for deviants: trials are grouped into pairs; within
         #   these pairs, the first is always a standard to avoid that multiple 
         #   deviants following each other (0 is deviant, 1 is standard)
         assert ntrials%2 == 0, 'The number of deviants should be divisible by 2'
-        assert (ntrials*pdeviants).is_integer(), "ntrials*pdeviants must return an integer (this warning could be missleading because of python's imprecise representation)"
+        assert (ntrials*pdeviants).is_integer(), "ntrials*pdeviants must "\
+            "return an integer (this warning could be missleading because of "\
+            "python's imprecise representation)"
         
-        # there are (ntrials/2)*(pdeviants*2) pairs with standards and deviants (1, 0) and ntrials/2*(1-(pdeviants*2)) pairs w/o a deviant (1, 1)
+        # there are (ntrials/2)*(pdeviants*2) pairs with standards and deviants (1, 0) 
+        # and ntrials/2*(1-(pdeviants*2)) pairs w/o a deviant (1, 1)
         pairsStims = int(ntrials*pdeviants)*[(1, 0)] + int((ntrials/2)*(1-(pdeviants*2)))*[(1, 1)]
         
         h =0
@@ -303,7 +318,10 @@ class Oddball:
         return framesIsi_list
     
     def saveScreenshot(self, fn = 'testdata/oddballScreenshot.png'):
-        self.win.saveMovieFrames(fn)
+        self.win.saveMovieFrames(fn, 
+                                 codec='libx264', 
+                                 fps=30, 
+                                 clearFrames=True)
     
 
 

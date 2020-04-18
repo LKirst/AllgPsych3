@@ -17,7 +17,7 @@ from psychopy import __version__ as psyvers
 
 import oddball
 
-logging.console.setLevel(logging.DEBUG)
+logging.console.setLevel(logging.DATA)
 
 expClock = core.Clock()
 
@@ -81,24 +81,25 @@ myOddball = oddball.Oddball(
         verticesPixStim     = [(-20,-20),(-20,20),(20,20),(20,-20)], # the vertices of the shape in pixels
         trackFrIntervals    = True,
         dataSaveClock       = expClock,
-        stopIndxForInstr    = nTrials/2-1
+        stopIndxForInstr    = -1, 
+        seed                = 0 # make the pseudorandom sequence reproducible
         )
 
 # instruction oddball
 myOddball.instruction(captureScreenshot = True)
-myOddball.saveScreenshot()
+myOddball.saveScreenshot(fn = 'testdata\instruction.png')
 
-# run and time first half of oddball
-myOddball.runOddball(triggerdeviant = 1, triggerstandard = 2, stopIndex = nTrials/2-1, waitbeforecontinue = 3)
 
-# input oddball first half
-myOddball.inputCount()
+# print lenght of experiment to console
+logging.data('The oddball experiment will take {} frames, i.e. approx. {:.4f} min.'.format(
+    sum(myOddball.getIsiFrList()),
+    sum(myOddball.getIsiFrList()) / win.getActualFrameRate() / 60))
 
-# instruction reminder
-myOddball.reminder()
 
-# run second half of oddball and ask for input
-myOddball.runOddball(triggerdeviant = 1, triggerstandard = 2, stopIndex = -1, waitbeforecontinue = 0)
+# run oddball
+myOddball.runOddball(triggerdeviant = 1, triggerstandard = 2, stopIndex = -1, 
+                     waitbeforecontinue = 3)
+
 
 # input oddball second half
 myOddball.inputCount()

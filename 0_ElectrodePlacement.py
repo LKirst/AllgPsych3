@@ -119,13 +119,13 @@ def pOnCircHalf(a, c, e):
     # (i.e. the line is defined)
     n          = 0.5 * np.add(a, c)
     ac_v       = np.subtract(c, a)
-    ac_vnorm   = np.array([ac_v[1], -ac_v[0]])
+    ac_vnorm   = findNormal(ac_v)
     
     # a points on the line that is orthagonal to c2e  and a vector of its direction
     # (i.e. the line is defined)
     v           = 0.5 * np.add(c, e)
     ce_v        = np.subtract(e, c)
-    ce_vnorm    = np.array([ce_v[1], -ce_v[0]])
+    ce_vnorm    = findNormal(ce_v)
     
     # the centre of the circle defined by a, c, e is the intersection 
     # of the two lines defined above
@@ -144,20 +144,35 @@ def pOnCircHalf(a, c, e):
 def seg_intersect(a1,a2, b1,b2) :
     """
     Find intersection of:
-    line segment a given by endpoints a1, a2
-    line segment b given by endpoints b1, b2
-    source: https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
+    the line defined by points a1, a2 and
+    the line defined by points b1, b2
     """
-    da = a2-a1
-    db = b2-b1
-    dp = a1-b1
-    dap = perp(da)
-    denom = np.dot( dap, db)
-    num = np.dot( dap, dp )
-    return (num / denom)*db + b1
+    a1a2_v = a2-a1
+    b1b2_v = b2-b1
+    b1a1_v = a1-b1
+    a1a2_vnorm = findNormal(a1a2_v)
+    
+    denom = np.dot( a1a2_vnorm, b1b2_v)
+    num = np.dot( a1a2_vnorm, b1a1_v )
+    
+    return (num / denom)*b1b2_v + b1
 
 
-def perp( a ) :
+def findNormal( a ) :
+    """
+    
+
+    Parameters
+    ----------
+    a : array_like
+        A two-dimensional array.
+
+    Returns
+    -------
+    b : ndarray
+        Array perpendicular to a.
+
+    """
     b = np.empty_like(a)
     b[0] = -a[1]
     b[1] = a[0]

@@ -6,6 +6,7 @@ __pycache__/
 *.pyd
 *.so
 
-# testdata and pictures
+# outputs (which I don't need to track, because I can reproduce them with the scripts)
 testdata/
 *.png
+*.txt
