@@ -5,10 +5,14 @@
 
 @author: LKirst
 
-Psychpy v3.0
+Psychpy v2020.1.3
 Python 3.6
 
 """
+
+import oddball
+
+
 
 import os
 
@@ -17,10 +21,7 @@ from psychopy import __version__ as psyvers
 
 import oddball
 
-# set up the directory
-_thisDir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(_thisDir)
-
+logging.console.setLevel(logging.DATA)
 
 expClock = core.Clock()
 
@@ -28,26 +29,13 @@ expClock = core.Clock()
 # |          Session Data Dlg                                                 |
 # -----------------------------------------------------------------------------
 
-exp_dict_dlg = {'Probandennummer':'', 'nTrials':300, 'pDeviant':.18}
-infoDlg = gui.DlgFromDict(exp_dict_dlg, title='Oddball Beispiel', order = ['Probandennummer', 'nTrials'])
-if not infoDlg.OK: core.quit() # user pressed cancel
-
-# Add some entries
-exp_dict_dlg.update({'Version_psychopy': psyvers, 'experimentStart': data.getDateStr(format='%d_%m_%y_%H_%M_%S')})
-
-# output files
-datfilename = _thisDir + os.sep + 'testdata' + os.sep + 'VP{}_{}'.format(exp_dict_dlg['Probandennummer'], data.getDateStr())
-logfilename = _thisDir + os.sep + 'testdata' + os.sep + 'VP{}_{}_logfile'.format(exp_dict_dlg['Probandennummer'], data.getDateStr())
-
-# logging
-logging.console.setLevel(logging.WARNING)  # receive ERROR, but not WARNING, DATA, EXP, INFO or DEBUG in the console
-logDat = logging.LogFile(logfilename,
-        filemode='w',  # if you set this to 'a' it will append instead of overwriting
-        level=logging.EXP)  # errors, warnings, data and exp will be sent to this logfile
+exp_dict_dlg = {'Probandennummer':'', 'nTrials':300, 'pDeviant':.2, 'Probandennummer': 99, 
+    'Version_psychopy': psyvers, 'experimentStart': data.getDateStr(format='%d_%m_%y_%H_%M_%S')}
 
 # -----------------------------------------------------------------------------
 # |          Initialising Objects                                             |
 # -----------------------------------------------------------------------------
+
 
 win = visual.Window(
                     [1280*0.7, 1024*0.7], # 70% of the size of the screen in WH205
@@ -56,6 +44,8 @@ win = visual.Window(
                     monitor='testMonitor',
                     units='cm'
                     )
+_thisDir    = os.path.dirname(os.path.abspath(__file__))
+datfilename = _thisDir + os.sep + 'testdata/odballData'
 
 thisExp = data.ExperimentHandler(
                                 name= '',
@@ -69,8 +59,6 @@ thisExp = data.ExperimentHandler(
                                 autoLog=True
                                 )
 
-nTrials = exp_dict_dlg['nTrials']
-
 # initialise an Oddball object
 myOddball = oddball.Oddball(
         win         = win, 
@@ -79,7 +67,7 @@ myOddball = oddball.Oddball(
         subjectnr   = exp_dict_dlg['Probandennummer'], 
         sessionnr   = '1', 
         triggerlen  = 0.01,
-        ntrials             = nTrials, # number of trials
+        ntrials             = 300, # number of trials
         nfr_on2onisi_upper  = 150, # upper bound of isis in frames
         nfr_on2onisi_lower  = 126, # lower bound of isis in frames
         nFrStim             = 6, # length of stimulus presentation in frames
@@ -94,21 +82,9 @@ myOddball = oddball.Oddball(
         seed                = 0 # make the pseudorandom sequence reproducible
         )
 
-# instruction oddball
-myOddball.instruction()
 
-# run oddball
-myOddball.runOddball(triggerdeviant = 1, triggerstandard = 2, stopIndex = -1, 
-                     waitbeforecontinue = 3)
+myOddball.drawStimForScreenshot()
 
 
-# input oddball second half
-myOddball.inputCount()
-
-# save and abort
-thisExp.saveAsWideText(datfilename + '.csv')
 thisExp.abort()
 win.close()
-
-
-

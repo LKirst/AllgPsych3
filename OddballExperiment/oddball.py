@@ -14,6 +14,7 @@ from psychopy import data, visual, event, core, logging
 from psychopy.constants import (NOT_STARTED, STARTED, STOPPED)
 
 import numpy as np
+import csv
 
 import textinput
 
@@ -317,11 +318,41 @@ class Oddball:
         
         return framesIsi_list
     
+    def drawStimForScreenshot(self):
+        # centre the stimuli in the middle
+        self.deviant.pos = self.standard.pos = (0,0)
+        
+        # screenshot deviant
+        self.deviant.draw()
+        self.win.flip()
+        self.win.getMovieFrame()
+        
+        # screenshot standard
+        self.standard.draw()
+        self.win.flip()
+        self.win.getMovieFrame()
+        
+        # screenshot empty
+        self.win.flip()
+        self.win.getMovieFrame()
+        
+        self.saveScreenshot(fn = 'testdata/stimuli.png')
+        
+    
     def saveScreenshot(self, fn = 'testdata/oddballScreenshot.png'):
         self.win.saveMovieFrames(fn, 
                                  codec='libx264', 
                                  fps=30, 
                                  clearFrames=True)
+    
+    
+    def saveTrialList(self, fn = 'testdata/oddballTrialList.csv'):
+        trialList = self.trialHandler.trialList
+        keys = trialList[0].keys()
+        with open(fn, 'w', newline='') as output_file:
+            dict_writer = csv.DictWriter(output_file, keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(trialList)
     
 
 
