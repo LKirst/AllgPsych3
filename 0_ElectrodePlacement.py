@@ -12,6 +12,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 
+# # If you want to see the plots in a dedicated matplotlib window
+# get_ipython().run_line_magic('matplotlib', 'qt')
+
+# If you want to see the plots in the spyder plot window
+get_ipython().run_line_magic('matplotlib', 'inline')
+
 # %% Functions to set the position of electrodes
 
 def setPos(mark4, chan, mirrorChanX = None, mirrorChanY = None, mirrorChanXY = None,
@@ -180,9 +186,9 @@ def findNormal( a ) :
 
 # %% Functions to plot and store the head model
 
-def plotHead(mark4, limits = [-.5, .5]):
+def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False):
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize = (8, 8))
     
     r = np.linalg.norm(getPos(mark4, 'Fp1')) # radius of the circle
     circle = plt.Circle((0,0), 
@@ -206,7 +212,13 @@ def plotHead(mark4, limits = [-.5, .5]):
     
     plt.plot(0, -(r + 0.1*r), marker = "^", markersize = 15) # plot the nose
     
-    sns.despine() # get rid of the bounding box
+    if axisOff: plt.axis('off')
+    else: sns.despine() # get rid of the bounding box
+    
+    if title is not None: plt.title(title) # add a title
+    
+    plt.show()
+    return(ax)
 
 
 def writeNewPosFile(mark4, file = 'electrode_positions_default_KU.txt'):
@@ -231,7 +243,7 @@ channels = ['Nz', 'Iz',
             'AFz', 'AF3', 'AF4', 'AF7', 'AF8',
             'Fz', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 
             'FCz', 'FC1', 'FC2', 'FC3', 'FC4', 'FC5', 'FC6', 'FT7', 'FT8',
-            'Cz', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'T7', 'T8', 
+            'Cz', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'T7', 'T8', 'T9', 'T10',
             'CPz','CP1', 'CP2', 'CP3', 'CP4', 'CP5', 'CP6', 'TP7', 'TP8',
             'Pz', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 
             'POz', 'PO3', 'PO4', 'PO7', 'PO8',
@@ -241,10 +253,10 @@ mark4 = pd.DataFrame(np.nan,
                      index = channels, 
                      columns = ['posx', 'posy', 'defaultIndx', 'customIndx'])
 
-# %% Set values based on the default ~\OpenBCI_GUI\data\electrode_positions_default.txt
+# %% Set values based on the default file, used by the OpenBCI GUI (v4.2.0)
 
-# This is the layout you get, when you download the OpenBCI_GUI (v4.2.0)
- 
+# File location: ~\OpenBCI_GUI\data\electrode_positions_default.txt
+
 mark4 = setPos(mark4, 'Cz', x = 0, y = 0, customIndx = [8]) # The center of the head circle
 mark4 = setPos(mark4, 'Fp1', 'Fp2',   pos = (-.125, -.416), defaultIndx = [1, 2])
 mark4 = setPos(mark4, 'C3', 'C4',     pos = (-.2, 0),       defaultIndx = [3, 4])
@@ -255,14 +267,13 @@ mark4 = setPos(mark4, 'F3', 'F4',     pos = (-.18,  -.15),  defaultIndx = [11, 1
 mark4 = setPos(mark4, 'T7', 'T8',     pos = (-.416, 0),     defaultIndx = [13, 14])
 mark4 = setPos(mark4, 'P3', 'P4',     pos = (-.18, .15),    defaultIndx = [15, 16])
 
-plotHead(mark4)
+plotHead(mark4, title = 'OpenBCI Mark IV Default')
 
 
 # %% Custom setup
 
 # The placement of the electrodes is based on:
-# Jurak, Tsuzuki & Dan (2007). 10/20, 10/10, and 10/5 systems revisited: 
-# Their validity as relative head-surface-based positioning systems.
+# Jurcak, V., Tsuzuki, D., & Dan, I. (2007). 10/20, 10/10, and 10/5 systems revisited: Their validity as relative head-surface-based positioning systems. NeuroImage, 34(4), 1600–1611. https://doi.org/10.1016/j.neuroimage.2006.09.024
 
 customIndeces = [
     ('Fp1', 1), # electrodes 1-8 are connected to the Cyton board
@@ -303,17 +314,18 @@ mark4 = setPos(mark4, 'Nz',  mirrorChanY = 'Iz',    y = -lenNzToIz*0.5)
 # Fp1, Fpz, F7, T7, P7, O1, Oz and their right hemisphere counterparts,
 # I can clearly see, that the sequence T7, C3, Cz, etc is incorrectly positioned, 
 # because T7 is not on the circumference
-mark4 = setPos(mark4, 'T7', 'T8', x = lenNzToIz*0.4)
-mark4 = setPos(mark4, 'C5', 'C6', x = lenNzToIz*0.3)
-mark4 = setPos(mark4, 'C3', 'C4', x = lenNzToIz*0.2)
-mark4 = setPos(mark4, 'C1', 'C2', x = lenNzToIz*0.1)
+mark4 = setPos(mark4, 'T9', 'T10',  x = -lenNzToIz*0.5)
+mark4 = setPos(mark4, 'T7', 'T8',   x = -lenNzToIz*0.4)
+mark4 = setPos(mark4, 'C5', 'C6',   x = -lenNzToIz*0.3)
+mark4 = setPos(mark4, 'C3', 'C4',   x = -lenNzToIz*0.2)
+mark4 = setPos(mark4, 'C1', 'C2',   x = -lenNzToIz*0.1)
 
 
 # circumference
 mark4 = setPos(mark4,  'O2', 'O1', 'Fp2', 'Fp1',   pos = pOnCirc(lenNzToIz*.4, 5))
-mark4 = setPos(mark4,   'PO8', 'PO7', 'AF8','AF7',  pos = pOnCirc(lenNzToIz*.4, 10))
-mark4 = setPos(mark4,  'P8', 'P7',  'F8', 'F7',     pos = pOnCirc(lenNzToIz*.4, 15))
-mark4 = setPos(mark4,  'TP8','TP7', 'FT8', 'FT7',   pos = pOnCirc(lenNzToIz*.4, 20))
+mark4 = setPos(mark4,  'PO8', 'PO7', 'AF8','AF7',  pos = pOnCirc(lenNzToIz*.4, 10))
+mark4 = setPos(mark4,  'P8', 'P7',  'F8', 'F7',    pos = pOnCirc(lenNzToIz*.4, 15))
+mark4 = setPos(mark4,  'TP8','TP7', 'FT8', 'FT7',  pos = pOnCirc(lenNzToIz*.4, 20))
 
 
 # F curve
@@ -358,12 +370,12 @@ mark4 = setPos(mark4, 'AF3', 'AF4', 'PO3', 'PO4',
                    getPos(mark4, 'AF8')
                    ))
 
-plotHead(mark4)
+plotHead(mark4, title = '10-10 System', axisOff = True)
 
 
 # %% Write to file
 
-plotHead(mark4.dropna(subset = ['customIndx']))
+plotHead(mark4.dropna(subset = ['customIndx']), title = 'OpenBCI Mark IV KU')
 
 writeNewPosFile(mark4)
 
