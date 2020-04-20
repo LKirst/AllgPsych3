@@ -5,18 +5,22 @@ Created Apr 2020
 @author: LKirst
 
 """
-
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 
-# # If you want to see the plots in a dedicated matplotlib window
+# If you want to see the plots in a dedicated matplotlib window:
 # get_ipython().run_line_magic('matplotlib', 'qt')
-
-# If you want to see the plots in the spyder plot window
+# If you want to see the plots in the spyder plot window:
 get_ipython().run_line_magic('matplotlib', 'inline')
+
+# %% Working directory
+
+_thisDir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(_thisDir)
 
 # %% Functions to set the position of electrodes
 
@@ -186,7 +190,7 @@ def findNormal( a ) :
 
 # %% Functions to plot and store the head model
 
-def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False):
+def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False, fn = None):
     
     fig, ax = plt.subplots(figsize = (8, 8))
     
@@ -217,7 +221,9 @@ def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False):
     
     if title is not None: plt.title(title) # add a title
     
-    plt.show()
+    if fn is not None: plt.savefig(fn)
+    else: plt.show()
+    
     return(ax)
 
 
@@ -370,14 +376,14 @@ mark4 = setPos(mark4, 'AF3', 'AF4', 'PO3', 'PO4',
                    getPos(mark4, 'AF8')
                    ))
 
-plotHead(mark4, title = '10-10 System', axisOff = True)
+plotHead(mark4, title = '10-10 System', axisOff = True, fn = 'electrode_10_10_system.png')
 
 
 # %% Write to file
 
 plotHead(mark4.dropna(subset = ['customIndx']), title = 'OpenBCI Mark IV KU')
 
-writeNewPosFile(mark4)
+# writeNewPosFile(mark4)
 
 
 
