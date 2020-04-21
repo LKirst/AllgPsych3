@@ -10,3 +10,6 @@ __pycache__/
 testdata/
 *.png
 *.txt
+
+# experimental files
+playground/

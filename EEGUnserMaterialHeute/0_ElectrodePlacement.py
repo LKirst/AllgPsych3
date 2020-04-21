@@ -4,6 +4,9 @@ Created Apr 2020
 
 @author: LKirst
 
+Mit diesem Skript koennt ihr Abbildungen zum 10-10-System erstellen und zu 
+verschiedenen Elektrodenplatzierungen, die wir fuer das OpenBCI verwenden.
+
 """
 import os
 import numpy as np

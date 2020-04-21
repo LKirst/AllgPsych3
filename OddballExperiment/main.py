@@ -28,8 +28,8 @@ expClock = core.Clock()
 # |          Session Data Dlg                                                 |
 # -----------------------------------------------------------------------------
 
-exp_dict_dlg = {'Probandennummer':'', 'nTrials':300, 'pDeviant':.18}
-infoDlg = gui.DlgFromDict(exp_dict_dlg, title='Oddball Beispiel', order = ['Probandennummer', 'nTrials'])
+exp_dict_dlg = {'Probandennummer':'', 'nTrials':300, 'pDeviant':.18, 'seed':1}
+infoDlg = gui.DlgFromDict(exp_dict_dlg, title='Oddball Beispiel', order = ['Probandennummer', 'nTrials', 'seed'])
 if not infoDlg.OK: core.quit() # user pressed cancel
 
 # Add some entries
@@ -91,7 +91,7 @@ myOddball = oddball.Oddball(
         trackFrIntervals    = True,
         dataSaveClock       = expClock,
         stopIndxForInstr    = -1, 
-        seed                = 0 # make the pseudorandom sequence reproducible
+        seed                = exp_dict_dlg['seed'] # make the pseudorandom sequence reproducible
         )
 
 # instruction oddball
