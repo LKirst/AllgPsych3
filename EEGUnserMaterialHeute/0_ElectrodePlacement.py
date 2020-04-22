@@ -7,6 +7,15 @@ Created Apr 2020
 Mit diesem Skript koennt ihr Abbildungen zum 10-10-System erstellen und zu 
 verschiedenen Elektrodenplatzierungen, die wir fuer das OpenBCI verwenden.
 
+Um das Skript im Editor Spyder laufen zu lassen, öffnet Spyder und öffnet dann 
+diese Datei über das Ordnersymbol oben im Editorfenster 
+(oder über den Shortcut strg + O). Ihr startet das Skript dann über das grüne
+Play-Symbol oben im Editorfenster (oder über den Shortcut F5).
+
+Wenn sich die Plots nicht in eigenen Fenstern oeffnen, schließst Spyder, öffnet
+es wieder und startet das Skript noch einmal. Jetzt sollten die Abbildungen 
+sich oeffnen.
+
 """
 import os
 import numpy as np
@@ -15,10 +24,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 
-# If you want to see the plots in a dedicated matplotlib window:
-# get_ipython().run_line_magic('matplotlib', 'qt')
-# If you want to see the plots in the spyder plot window:
-get_ipython().run_line_magic('matplotlib', 'inline')
+# Open plots in a dedicated matplotlib qt window:
+get_ipython().run_line_magic('matplotlib', 'qt')
 
 # %% Working directory
 
@@ -262,7 +269,7 @@ mark4 = pd.DataFrame(np.nan,
                      index = channels, 
                      columns = ['posx', 'posy', 'defaultIndx', 'customIndx'])
 
-# %% Set values based on the default file, used by the OpenBCI GUI (v4.2.0)
+# %% Set values based on the default file, used by the OpenBCI_GUI (v4.2.0)
 
 # File location: ~\OpenBCI_GUI\data\electrode_positions_default.txt
 
