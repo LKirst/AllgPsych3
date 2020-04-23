@@ -200,7 +200,7 @@ def findNormal( a ) :
 
 # %% Functions to plot and store the head model
 
-def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False, fn = None):
+def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False, fn = None, size = 13):
     
     fig, ax = plt.subplots(figsize = (8, 8))
     
@@ -215,7 +215,7 @@ def plotHead(mark4, limits = [-.6, .6], title = None, axisOff = False, fn = None
     for lbl in mark4Complete.index:
         plt.annotate(lbl,
                      (mark4Complete.loc[lbl, 'posx'], mark4Complete.loc[lbl, 'posy']),
-                     textcoords = 'offset pixels', xytext = (0, 5))
+                     textcoords = 'offset pixels', xytext = (0, 5), size = size)
         # 'bo-' means blue color, round points
         plt.plot(mark4Complete['posx'], mark4Complete['posy'], 'bo')
     
@@ -391,7 +391,7 @@ plotHead(mark4, title = '10-10 System', axisOff = True, fn = 'electrode_10_10_sy
 
 # %% Write to file
 
-plotHead(mark4.dropna(subset = ['customIndx']), title = 'OpenBCI Mark IV KU')
+plotHead(mark4.dropna(subset = ['customIndx']), title = 'OpenBCI Mark IV KU', size = 18, axisOff = True)
 
 # writeNewPosFile(mark4)
 
