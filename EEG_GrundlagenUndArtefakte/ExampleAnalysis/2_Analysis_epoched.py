@@ -11,11 +11,27 @@ import mne
 # Open plots in a dedicated matplotlib qt window:
 get_ipython().run_line_magic('matplotlib', 'qt')
 
+# %% Loading the raw data
 
-# %% Detecting events
+# N.b.: don't use single backward slashes in your path.
+# On Windows, if you copy a path, you have to replace every single backslash \
+# with either a forward slash / or a double backslash \\
+data_folder = '~\\Documents\\AllgPsyVI\\Lehre\\Allgemeine3\\Daten' 
+data_folder_expanded = os.path.expanduser(data_folder) # this expands the tilde to contain the path of my windows user
 
-events = mne.find_events(filt_raw, stim_channel='STI 014')
-print(events[:5])  # show the first 5
+data_filename = 'LK_1_post1'
+data_filepath_raw = os.path.join(data_folder_expanded, 
+                                 data_filename + '_cropped_raw.fif')
+
+raw = mne.io.read_raw_fif(data_filepath_raw, preload = True) 
+
+# %% Find events 
+
+events = mne.find_events(raw, stim_channel = 'Status')
+# 41 is the deviant
+# 42 is the standard
+
+print(events[np.isin(events[:,2], [41, 42])])
 
 # %% Creating an epochs object and rejecting epochs based on µV-Threshold
 

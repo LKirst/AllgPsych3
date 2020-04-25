@@ -1,10 +1,16 @@
 """
 
-@author: Kostiantyn Maksymenko <kostiantyn.maksymenko@gmail.com>
+Authors: Kostiantyn Maksymenko <kostiantyn.maksymenko@gmail.com>
          Samuel Deslauriers-Gauthier <sam.deslauriers@gmail.com>
-         Lukas Kirst
+
+Modified by Lukas Kirst
 
 License: BSD (3-clause)
+
+In diesem Tutorial simulieren wir, wie EEG-Daten in Sinusoide (sinusfoermige) 
+Funktionen aufgeteilt werden koennen. Dafuer gehen wir von den Sinusoiden aus
+und versuchen einen simulierten Datensatz zu erstellen, der wie ereigniskorrelierte
+Potenziale (EKP, event-related potentials) aussieht.
 
 Achtung: Dieses Skript lädt einen Beispieldatensatz herunter, wenn Sie ihn 
 noch nicht heruntergeladen haben. Das kann lange dauern.
@@ -46,7 +52,7 @@ fwd_fname = op.join(data_path, 'MEG', subject,
                     'sample_audvis-meg-eeg-oct-6-fwd.fif')
 fwd = mne.read_forward_solution(fwd_fname)
 src = fwd['src']
-
+ mm
 # To select a region to activate, we use the caudal middle frontal to grow
 # a region of interest.
 selected_label = mne.read_labels_from_annot(
