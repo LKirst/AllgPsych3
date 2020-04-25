@@ -128,14 +128,24 @@ for i, (title, raw_obj, exclude) in enumerate([
 
 events = mne.find_events(raw, stim_channel = 'Status')
 event_dict = {'deviant': 41, 'standard': 42}
-
-
-epochs_params = dict(events=events, event_id=event_id, tmin=tmin, tmax=tmax,
-                     picks=picks, reject=reject, proj=True)
+epochs_params = dict(events=events, event_id=event_dict['deviant'], 
+                     tmin=-0.2, tmax=0.6,
+                     picks= 'all')
 
 fig_evok, axes_evok = plt.subplots(nrows = 2, ncols = 2, sharey = True, sharex = True)
+axes_evok = axes_evok.flatten()
 
-evoked_no_ref = mne.Epochs(raw, **epochs_params).average()
+for i, (title, raw_obj) in enumerate([
+        ('Before re-ref',                       raw), 
+        ('Linked mastoids',                     raw_linkedmastoids),
+        ('Avg reference',                       raw_avg_ref),
+        ('Re-ref to ' + exercise_ref_chan[0],   raw_exercise)
+        ]):
+
+    evoked_Pz = mne.Epochs(raw_obj, **epochs_params).average()
+    evoked_Pz.plot(axes = axes_evok[i])
+    axes_evok[i].set_title(title)
+    
 
 
 
