@@ -1,7 +1,8 @@
 """
 
-Authors: Kostiantyn Maksymenko <kostiantyn.maksymenko@gmail.com>
-         Samuel Deslauriers-Gauthier <sam.deslauriers@gmail.com>
+Authors: Yousra Bekhti <yousra.bekhti@gmail.com>
+         Mark Wronkiewicz <wronk.mark@gmail.com>
+         Eric Larson <larson.eric.d@gmail.com>
 
 Modified by Lukas Kirst
 
@@ -17,12 +18,14 @@ noch nicht heruntergeladen haben. Das kann lange dauern.
 
 """
 
-import os.path as op
-
 import numpy as np
+import matplotlib.pyplot as plt
 
 import mne
+from mne import find_events, Epochs, compute_covariance, make_ad_hoc_cov
 from mne.datasets import sample
+from mne.simulation import (simulate_sparse_stc, simulate_raw,
+                            add_noise, add_ecg, add_eog)
 
 # %% Make sure that the plots are outputted to matplotlib qt windows
 
@@ -30,75 +33,68 @@ from mne.datasets import sample
 get_ipython().run_line_magic('matplotlib', 'qt')
 
 
-# %%
+# %% Load data template
 
-# For this example, we will be using the information of the sample subject.
-# This will download the data if it not already on your machine. We also set
-# the subjects directory so we don't need to give it to functions.
 data_path = sample.data_path()
-subjects_dir = op.join(data_path, 'subjects')
-subject = 'sample'
+raw_fname = data_path + '/MEG/sample/sample_audvis_raw.fif'
+fwd_fname = data_path + '/MEG/sample/sample_audvis-meg-eeg-oct-6-fwd.fif'
 
-# First, we get an info structure from the test subject.
-evoked_fname = op.join(data_path, 'MEG', subject, 'sample_audvis-ave.fif')
-info = mne.io.read_info(evoked_fname)
-tstep = 1. / info['sfreq']
+# For this example, we will be using the information of the sample subject as a template.
+# This will download the data if it not already on your machine.
+raw = mne.io.read_raw_fif(raw_fname)
+raw.set_eeg_reference(projection=True)
 
-# %%
+# %% Generate dipole time series
 
-# To simulate sources, we also need a source space. It can be obtained from the
-# forward solution of the sample subject.
-fwd_fname = op.join(data_path, 'MEG', subject,
-                    'sample_audvis-meg-eeg-oct-6-fwd.fif')
+n_dipoles = 4  # number of dipoles to create
+epoch_duration = 2.  # duration of each epoch/event
+n = 0  # harmonic number
+rng = np.random.RandomState(0)  # random state (make reproducible)
+
+
+def data_fun(times):
+    """Generate time-staggered sinusoids at harmonics of 10Hz"""
+    global n
+    n_samp = len(times)
+    window = np.zeros(n_samp)
+    start, stop = [int(ii * float(n_samp) / (2 * n_dipoles))
+                   for ii in (2 * n, 2 * n + 1)]
+    window[start:stop] = 1.
+    n += 1
+    data = 25e-9 * np.sin(2. * np.pi * 10. * n * times)
+    data *= window
+    return data
+
+
+times = raw.times[:int(raw.info['sfreq'] * epoch_duration)]
 fwd = mne.read_forward_solution(fwd_fname)
 src = fwd['src']
- mm
-# To select a region to activate, we use the caudal middle frontal to grow
-# a region of interest.
-selected_label = mne.read_labels_from_annot(
-    subject, regexp='caudalmiddlefrontal-lh', subjects_dir=subjects_dir)[0]
-location = 'center'  # Use the center of the region as a seed.
-extent = 10.  # Extent in mm of the region.
-label = mne.label.select_sources(
-    subject, selected_label, location=location, extent=extent,
-    subjects_dir=subjects_dir)
+stc = simulate_sparse_stc(src, n_dipoles=n_dipoles, times=times,
+                          data_fun=data_fun, random_state=rng)
+# look at our source data
+fig, ax = plt.subplots(1)
+ax.plot(times, 1e9 * stc.data.T)
+ax.set(ylabel='Amplitude (nAm)', xlabel='Time (sec)')
+mne.viz.utils.plt_show()
 
-# Define the time course of the activity for each source of the region to
-# activate. Here we use a sine wave at 18 Hz with a peak amplitude
-# of 10 nAm.
-source_time_series = np.sin(2. * np.pi * 18. * np.arange(100) * tstep) * 10e-9
+# %% Simulate raw data
 
-# Define when the activity occurs using events. The first column is the sample
-# of the event, the second is not used, and the third is the event id. Here the
-# events occur every 200 samples.
-n_events = 50
-events = np.zeros((n_events, 3))
-events[:, 0] = 100 + 200 * np.arange(n_events)  # Events sample.
-events[:, 2] = 1  # All events have the sample id.
-
-# Create simulated source activity. Here we use a SourceSimulator whose
-# add_data method is key. It specified where (label), what
-# (source_time_series), and when (events) an event type will occur.
-source_simulator = mne.simulation.SourceSimulator(src, tstep=tstep)
-source_simulator.add_data(label, source_time_series, events)
-
-# Project the source time series to sensor space and add some noise. The source
-# simulator can be given directly to the simulate_raw function.
-raw = mne.simulation.simulate_raw(info, source_simulator, forward=fwd)
-cov = mne.make_ad_hoc_cov(raw.info)
-mne.simulation.add_noise(raw, cov, iir_filter=[0.2, -0.2, 0.04])
-raw.plot()
+raw_sim = simulate_raw(raw.info, [stc] * 10, forward=fwd, verbose=True)
+cov = make_ad_hoc_cov(raw_sim.info)
+add_noise(raw_sim, cov, iir_filter=[0.2, -0.2, 0.04], random_state=rng)
+add_ecg(raw_sim, random_state=rng)
+add_eog(raw_sim, random_state=rng)
+raw_sim.plot()
 
 
-# %% plot
+# %% Plot evoked data
 
-# Plot evoked data (2D) to get another view of the simulated raw data.
-events = mne.find_events(raw)
-epochs = mne.Epochs(raw, events, 1, tmin=-0.05, tmax=0.2)
+events = find_events(raw_sim)  # only 1 pos, so event number == 1
+epochs = Epochs(raw_sim, events, 1, tmin=-0.2, tmax=epoch_duration)
+cov = compute_covariance(epochs, tmax=0., method='empirical',
+                         verbose='error')  # quick calc
 evoked = epochs.average()
-evoked.plot()
+evoked.plot_white(cov, time_unit='s')
 
-# Display the projections (3D) stored in `info['projs']`
-evoked.plot_projs_topomap()
 
 
