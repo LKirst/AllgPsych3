@@ -2,7 +2,7 @@
 """
 Created on Tue Apr 21 12:30:50 2020
 
-@author: LKirst
+@author: Lukas Kirst
 """
 
 

@@ -11,6 +11,9 @@ In diesem Tutorial wird euch demonstriert, welchen Einfluss die Wahl einer
 Referenzelektrode auf die Daten hat. Dafür rereferenzieren wir die Daten mit 
 unterschiedlichen Referenzelektroden.
 
+Wenn ihr vom Skript 1_Analysis_raw.py kommt koennt ihr den Abschnitt, in dem
+die Daten geladen werden ("Loading the raw data") ueberspringen!
+
 """
 
 import os

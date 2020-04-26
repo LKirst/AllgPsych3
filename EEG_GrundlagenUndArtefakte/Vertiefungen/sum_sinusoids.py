@@ -28,7 +28,7 @@ x = np.arange(0, 20, time_step) # a time vector
 # 2*pi/period is the length of one cycle
 
 period_y1   = 1
-ampl_y1     = 1
+ampl_y1     = 2
 y1          = ampl_y1*np.sin(2*np.pi*period_y1*x)
 
 period_y2   = 3
@@ -51,6 +51,7 @@ axes[2].plot(x, y3, color='y', lw=2)
 axes[3].plot(x, sig, color='r', lw=2)
 
 axes[0].set_xlim(0, 2)
+axes[3].set_xlabel('time')
 
 fig.show()
 
