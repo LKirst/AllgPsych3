@@ -75,7 +75,7 @@ raw.set_montage(biosemi64_montage, raise_if_subset = False)
 
 # Here's how the data looks in its original state:
 
-# raw.plot()
+raw.plot()
 
 # add new reference channel (all zero); this function returns a copy
 raw_new_ref = mne.add_reference_channels(raw, ref_channels=['EEG 999'])
@@ -85,7 +85,7 @@ raw_new_ref = mne.add_reference_channels(raw, ref_channels=['EEG 999'])
 
 raw_linkedmastoids = raw_new_ref.set_eeg_reference(ref_channels=['M1', 'M2'])
 
-# raw_linkedmastoids.plot()
+raw_linkedmastoids.plot()
 
 
 # %% Average reference
@@ -93,15 +93,15 @@ raw_linkedmastoids = raw_new_ref.set_eeg_reference(ref_channels=['M1', 'M2'])
 
 raw_avg_ref = raw.copy().set_eeg_reference(ref_channels='average')
 
-# raw_avg_ref.plot()
+raw_avg_ref.plot()
 
 
 # %% Try out a different reference electrode to test the effect of referencing
 
-exercise_ref_chan = ['Fp1']
-raw_exercise = raw.copy().set_eeg_reference(ref_channels=['Fp1'])
+exercise_ref_chan = ['O1']
+raw_exercise = raw.copy().set_eeg_reference(ref_channels=['O1'])
 
-# raw_exercise.plot()
+raw_exercise.plot()
 
 # %% Plot psd 
 

@@ -40,7 +40,7 @@ raw.set_montage(biosemi64_montage, raise_if_subset = False)
 
 filt_hp_raw = raw.copy().filter(l_freq = 0.1, h_freq = None) 
 # filt_hp_raw.plot()
-# filt_hp_raw.plot_psd()
+filt_hp_raw.plot_psd()
 
 # %% Low-pass
 
