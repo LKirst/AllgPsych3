@@ -12,5 +12,8 @@ testdata/
 *.txt
 !LICENSE*.txt
 
+# the un-cropped eeg data 
+*.bdf
+
 # experimental files
 Playground/

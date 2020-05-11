@@ -11,20 +11,20 @@ Tutorial to illustrate filters.
 
 import os
 import mne
-import matplotlib.pyplot as plt
-
-# %%
+from pathlib import Path
 
 # If you want to see the plots in a dedicated matplotlib window:
 get_ipython().run_line_magic('matplotlib', 'qt')
 
-# %% Loading the raw data
+# Get the data folder (only works if you downloaded the entire project, 
+# including the Data folder)
+scripts_folder       = Path(__file__).parent.parent.parent
+data_folder_expanded = os.path.join(scripts_folder, 'Data')
+assert os.path.isdir(data_folder_expanded), ('There is no Data folder '
+    'where the script assumes there should be one. You could try setting the '
+    'data_folder_expanded variable manually to the folder where you saved the data.')
 
-# N.b.: don't use single backward slashes in your path.
-# On Windows, if you copy a path, you have to replace every single backslash \
-# with either a forward slash / or a double backslash \\
-data_folder = '~\\Documents\\AllgPsyVI\\Lehre\\Allgemeine3\\Daten' 
-data_folder_expanded = os.path.expanduser(data_folder) # this expands the tilde to contain the path of my windows user
+# %% Loading the raw data
 
 data_filename = 'LK_1_post1'
 data_filepath_raw = os.path.join(data_folder_expanded, 
