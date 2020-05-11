@@ -12,9 +12,10 @@ testdata/
 *.txt
 !LICENSE*.txt
 
-# only track the un-cropped eeg data 
+# only track the un-cropped eeg data and the audio files for the ICA example
 Data/*
 !Data/LK_1_post1_cropped_raw.fif
+!Data/Intro*.wav
 
 # experimental files
 Playground/

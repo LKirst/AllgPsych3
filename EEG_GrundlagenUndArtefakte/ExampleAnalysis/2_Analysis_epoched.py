@@ -27,7 +27,7 @@ assert os.path.isdir(data_folder_expanded), ('There is no Data folder '
 
 data_filename = 'LK_1_post1'
 data_filepath_raw = os.path.join(data_folder_expanded, 
-                                 data_filename + '_cropped_raw.fif')
+                                 data_filename + '_filt_raw.fif')
 
 raw = mne.io.read_raw_fif(data_filepath_raw, preload = True)
 
@@ -56,7 +56,7 @@ fig.show()
 
 reject_criteria = dict(eeg=200e-6) # 200 µV
 
-epochs = mne.Epochs(raw, events, event_id=event_dict, tmin=-0.2, tmax=0.5,
+epochs = mne.Epochs(raw, events, event_id=event_dict, tmin=-0.2, tmax=0.8,
                     reject=reject_criteria, preload=True, 
                     baseline = (-0.2, 0),
                     picks = raw.ch_names[0:63])
@@ -81,24 +81,24 @@ ica.plot_components(inst = epochs, psd_args = {'fmax':50})
 
 # %% exclude components
 
-ica.exclude = [2, 9, 10]
+ica.exclude = [1, 9]
 ica.plot_properties(epochs, picks=ica.exclude, psd_args = {'fmax':50})
 
 epochs_ICs_rejected = epochs.copy()
 ica.apply(epochs_ICs_rejected)
 
-# %% average
-
-evoked = epochs_ICs_rejected.average()
-
 # %% save
 
-data_filepath_evoked = os.path.join(data_folder_expanded, data_filename + 
-                                      '_ave.fif')
+data_filepath_epoched = os.path.join(data_folder_expanded, data_filename + 
+                                      '_epo.fif')
 
-evoked.save(data_filepath_evoked)
+epochs_ICs_rejected.save(data_filepath_epoched, overwrite = True)
 
 
+# %% plot some trials for Pz
+
+data = epochs_ICs_rejected.get_data(picks = 'Pz') 
+# returns (n_epochs, n_channels, n_times)
 
 
 
