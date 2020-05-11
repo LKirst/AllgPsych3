@@ -12,8 +12,9 @@ testdata/
 *.txt
 !LICENSE*.txt
 
-# the un-cropped eeg data 
-*.bdf
+# only track the un-cropped eeg data 
+Data/*
+!Data/LK_1_post1_cropped_raw.fif
 
 # experimental files
 Playground/
