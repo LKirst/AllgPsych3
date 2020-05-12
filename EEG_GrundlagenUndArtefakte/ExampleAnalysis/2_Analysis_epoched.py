@@ -61,6 +61,11 @@ epochs = mne.Epochs(raw, events, event_id=event_dict, tmin=-0.2, tmax=0.8,
                     baseline = (-0.2, 0),
                     picks = raw.ch_names[0:63])
 
+# This shows us, that most events we dropped were dropped because of frontal
+# electrodes. The activity, which causes this, is most likely eye blinks 
+# and movements. Normally we would exclude these frontal channels from 
+# threshold based trial rejection, because we take care of eye artifacts with 
+# the ICA.
 epochs.plot_drop_log()
 
 # %% Run ICA
@@ -93,16 +98,6 @@ data_filepath_epoched = os.path.join(data_folder_expanded, data_filename +
                                       '_epo.fif')
 
 epochs_ICs_rejected.save(data_filepath_epoched, overwrite = True)
-
-
-# %% plot some trials for Pz
-
-data = epochs_ICs_rejected.get_data(picks = 'Pz') 
-# returns (n_epochs, n_channels, n_times)
-
-
-
-
 
 
 
