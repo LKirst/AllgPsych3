@@ -52,7 +52,7 @@ tmin, tmax = -0.1, 0.1
 raw_sample.del_proj()
 ecg_epochs = mne.Epochs(raw_sample, 
                     events = ecg_events, 
-                    ecg_event_id = ecg_event_id, 
+                    event_id = ecg_event_id, 
                     tmin = tmin, 
                     tmax = tmax, 
                     picks=picks)

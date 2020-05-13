@@ -50,7 +50,7 @@ mne.viz.plot_compare_evokeds(
     picks = 'Pz')
 
 
-# %% difference wave at Pz
+# %% difference wave for every electrode
 
 evoked_diff = mne.combine_evoked([evoked_standard, -evoked_deviant], 
                                  weights = 'equal')

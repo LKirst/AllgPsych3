@@ -55,9 +55,9 @@ A = np.array([[1, 1], [0.5, 2], [0.8, 0.2]])  # Mixing matrix
 X = np.dot(S, A.T)  # Generate observations
 
 # For example the third microphone:
-# Because we standardized above, I multiply the recording by 0.5 to stay within
+# Because we standardized above, I multiply the recording by 0.3 to stay within
 # the range of my speakers :D
-sd.play(X[:, 2]*0.5, samplerate)
+sd.play(X[:, 2]*0.3, samplerate)
 
 # %% Compute ICA
 
@@ -67,8 +67,8 @@ A_ = ica.mixing_  # Get estimated mixing matrix
 
 # %% Play ICs
 
-# I multply by 1.5, because the resulting IC is not loud enough
-sd.play(S_[:, 1]*1.5, samplerate)
+# I multply by 10, because the resulting IC is not loud enough
+sd.play(S_[:, 1]*10, samplerate)
 
 
 
