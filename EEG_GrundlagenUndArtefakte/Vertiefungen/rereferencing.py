@@ -40,9 +40,6 @@ data_filepath_raw = os.path.join(data_folder_expanded,
 
 raw = mne.io.read_raw_fif(data_filepath_raw, preload = True) 
 
-# We have a biosemi system
-biosemi64_montage = mne.channels.make_standard_montage('biosemi64')
-raw.set_montage(biosemi64_montage, raise_if_subset = False)
 
 
 # %% Background
@@ -76,7 +73,7 @@ raw.set_montage(biosemi64_montage, raise_if_subset = False)
 
 # Here's how the data looks in its original state:
 
-raw.plot()
+# raw.plot()
 
 # add new reference channel (all zero); this function returns a copy
 raw_new_ref = mne.add_reference_channels(raw, ref_channels=['EEG 999'])
@@ -86,7 +83,7 @@ raw_new_ref = mne.add_reference_channels(raw, ref_channels=['EEG 999'])
 
 raw_linkedmastoids = raw_new_ref.set_eeg_reference(ref_channels=['M1', 'M2'])
 
-raw_linkedmastoids.plot()
+# raw_linkedmastoids.plot()
 
 
 # %% Average reference
@@ -94,7 +91,7 @@ raw_linkedmastoids.plot()
 
 raw_avg_ref = raw.copy().set_eeg_reference(ref_channels='average')
 
-raw_avg_ref.plot()
+# raw_avg_ref.plot()
 
 
 # %% Try out a different reference electrode to test the effect of referencing
@@ -102,7 +99,7 @@ raw_avg_ref.plot()
 exercise_ref_chan = ['O1']
 raw_exercise = raw.copy().set_eeg_reference(ref_channels=['O1'])
 
-raw_exercise.plot()
+# raw_exercise.plot()
 
 # %% Plot psd 
 
@@ -114,7 +111,7 @@ for i, (title, raw_obj, exclude) in enumerate([
         ('Before re-ref',                       raw, None), 
         ('Linked mastoids',                     raw_linkedmastoids, ['M1', 'M2']),
         ('Avg reference',                       raw_avg_ref, None),
-        ('Re-ref to ' + exercise_ref_chan[0],   raw_exercise, ['Fp1'])
+        ('Re-ref to ' + exercise_ref_chan[0],   raw_exercise, ['O1'])
         ]):
     
     # exclude the reference channels (they should not show oscillations)

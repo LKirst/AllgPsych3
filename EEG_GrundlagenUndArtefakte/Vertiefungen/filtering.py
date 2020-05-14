@@ -30,11 +30,12 @@ data_filename = 'LK_1_post1'
 data_filepath_raw = os.path.join(data_folder_expanded, 
                                  data_filename + '_cropped_raw.fif')
 
-raw = mne.io.read_raw_fif(data_filepath_raw, preload = True) 
+raw_withMastoids = mne.io.read_raw_fif(data_filepath_raw, preload = True) 
 
 # We have a biosemi system
+raw =raw_withMastoids.copy().drop_channels(['M1', 'M2']) # we don't need the M1 and M2 channels anymore
 biosemi64_montage = mne.channels.make_standard_montage('biosemi64')
-raw.set_montage(biosemi64_montage, raise_if_subset = False)
+raw.set_montage(biosemi64_montage)
 
 # %% High-pass
 
