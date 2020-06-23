@@ -27,18 +27,23 @@ x = np.arange(0, 20, time_step) # a time vector
 
 # 2*pi/period is the length of one cycle
 
-period_y1   = 1
+# In an earlier version of this script, I mixed up frequency and period!
+# Period = 1/Frequency
+
+freq_y1     = 1
+period_y1   = 1/freq_y1
 ampl_y1     = 2
-y1          = ampl_y1*np.sin(2*np.pi*period_y1*x)
+y1          = ampl_y1*np.sin(2*np.pi/period_y1*x)
 
-period_y2   = 3
+freq_y2     = 3
+period_y2   = 1/freq_y2
 ampl_y2     = 1
-y2          = ampl_y2*np.sin(2*np.pi*period_y2*x)
+y2          = ampl_y2*np.sin(2*np.pi/period_y2*x)
 
-
-period_y3   = 8
+freq_y3     = 8
+period_y3   = 1/freq_y3
 ampl_y3     = 2
-y3          = ampl_y3*np.sin(2*np.pi*period_y3*x)
+y3          = ampl_y3*np.sin(2*np.pi/period_y3*x)
 
 
 # %% Sum sinusoids
