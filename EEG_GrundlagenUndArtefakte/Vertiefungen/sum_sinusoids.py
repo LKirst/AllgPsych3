@@ -25,10 +25,11 @@ x = np.arange(0, 20, time_step) # a time vector
 
 # %% Three sinusoids
 
-# 2*pi/period is the length of one cycle
-
 # In an earlier version of this script, I mixed up frequency and period!
 # Period = 1/Frequency
+#
+# Period is the lenght of a full cycle
+# Frequency is the number of cycles per second
 
 freq_y1     = 1
 period_y1   = 1/freq_y1

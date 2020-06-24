@@ -83,8 +83,8 @@ combined = np.vstack(
     (evoked_deviant.data[pz_ind, :], evoked_standard.data[pz_ind, :])
     )
 mean_combined = np.mean(combined, 0)
-# axesl[1].plot(evoked_standard.times, mean_combined*1e6,
-#               linewidth = 2, color = 'purple') # I multiply by 1e6 to get Microvolt
+axesl[1].plot(evoked_standard.times, mean_combined*1e6,
+              linewidth = 2, color = 'purple') # I multiply by 1e6 to get Microvolt
 
 
 
